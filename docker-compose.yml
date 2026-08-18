@@ -19,6 +19,7 @@ services:
     environment:
       NODE_ENV: production
       RAILS_ENV: production
+      APP_ENV: production
       INSTALLATION_ENV: docker
       FRONTEND_URL: ${CHATWOOT_PUBLIC_URL:-http://localhost:3000}
       FORCE_SSL: "false"
@@ -44,6 +45,10 @@ services:
     environment:
       NODE_ENV: production
       RAILS_ENV: production
+      # .env sets APP_ENV=development for the Python ai-service. Sidekiq/Rails read
+      # APP_ENV before RAILS_ENV, so pin it to production here to avoid booting into
+      # development.rb, which needs the dev-only `listen` gem absent from the prod image.
+      APP_ENV: production
       INSTALLATION_ENV: docker
       FRONTEND_URL: ${CHATWOOT_PUBLIC_URL:-http://localhost:3000}
       POSTGRES_HOST: postgres
