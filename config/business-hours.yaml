@@ -1,0 +1,13 @@
+timezone: Asia/Shanghai
+schedule:
+  monday: [{start: "09:00", end: "18:00"}]
+  tuesday: [{start: "09:00", end: "18:00"}]
+  wednesday: [{start: "09:00", end: "18:00"}]
+  thursday: [{start: "09:00", end: "18:00"}]
+  friday: [{start: "09:00", end: "18:00"}]
+  saturday: [{start: "10:00", end: "17:00"}]
+  sunday: []
+closed_dates: []
+open_message: 当前在营业时间内，需要时我可以马上为你转接人工客服。
+closed_message: 当前为非营业时间，我会先记录你的问题，人工客服将在下一个营业时段回复。
+

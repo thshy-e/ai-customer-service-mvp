@@ -1,0 +1,27 @@
+products:
+  - id: demo-light
+    name: 演示款桌面灯
+    aliases: [桌面灯, 台灯, 阅读灯, demo light]
+    summary: 适合书桌和床头使用的演示商品，请替换为你的真实商品资料。
+    image: /assets/demo-light.png
+    price_rows:
+      - label: 标准款
+        price: "¥199"
+      - label: 含无线充电款
+        price: "¥269"
+    features: [三档色温, 触控调光, USB-C 供电]
+    cta_label: 咨询这款
+
+  - id: demo-tumbler
+    name: 演示款随行杯
+    aliases: [随行杯, 保温杯, 水杯, demo tumbler]
+    summary: 适合日常通勤的演示商品，请替换为你的真实商品资料。
+    image: /assets/demo-tumbler.png
+    price_rows:
+      - label: 420ml
+        price: "¥129"
+      - label: 580ml
+        price: "¥159"
+    features: [双层保温, 可拆洗杯盖, 两种容量]
+    cta_label: 咨询这款
+

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="示例商店在线客服与产品顾问" />
+    <title>示例商店 · 在线客服</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body data-chatwoot-base-url="${CHATWOOT_PUBLIC_URL}" data-chatwoot-token="${CHATWOOT_WEBSITE_TOKEN}">
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="示例商店首页"><span class="brand-mark">示</span><span>示例商店</span></a>
+      <nav class="site-nav" aria-label="主导航"><a href="#products">精选产品</a><a href="#service">服务说明</a><a href="#chat">在线咨询</a></nav>
+      <div class="header-status"><span class="status-dot"></span><span>在线 · 24 小时自动响应</span></div>
+    </header>
+
+    <main id="top">
+      <section class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">SIMPLE CHOICES, BETTER DAYS</p>
+          <h1>告诉我们你的需要，<em>剩下的交给顾问。</em></h1>
+          <p class="hero-lead">从选品、规格到价格，一位懂产品的在线顾问随时为你整理答案。营业时间内人工客服会继续跟进。</p>
+          <div class="hero-actions"><button class="button button-primary" id="start-chat" type="button">开始咨询 <span aria-hidden="true">↗</span></button><a class="text-link" href="#products">先看看产品 <span aria-hidden="true">↓</span></a></div>
+          <div class="trust-row"><span><strong>01</strong> 产品匹配</span><span><strong>02</strong> 价格透明</span><span><strong>03</strong> 人工接管</span></div>
+        </div>
+        <div class="hero-visual" aria-label="精选商品展示">
+          <div class="visual-note">CURATED FOR YOU <span>↗</span></div>
+          <div class="hero-image hero-image-large"><img src="/assets/demo-light.png" alt="演示款桌面灯" /><div class="image-label"><span>演示款桌面灯</span><strong>¥199 起</strong></div></div>
+          <div class="hero-image hero-image-small"><img src="/assets/demo-tumbler.png" alt="演示款随行杯" /><div class="image-label"><span>演示款随行杯</span><strong>¥129 起</strong></div></div>
+          <div class="visual-stamp">SELECTED<br /><b>24/7</b></div>
+        </div>
+      </section>
+
+      <section class="product-section" id="products">
+        <div class="section-heading"><div><p class="eyebrow">PRODUCTS</p><h2>先从热门选择开始</h2></div><p>不知道怎么选？打开右侧客服，告诉我使用场景和预算即可。</p></div>
+        <div class="product-grid">
+          <article class="product-card"><div class="product-card-image"><img src="/assets/demo-light.png" alt="演示款桌面灯" /><span class="product-tag">热卖</span></div><div class="product-card-info"><div><h3>演示款桌面灯</h3><p>暖光 · 三档调节 · USB-C</p></div><strong>¥199 起</strong></div><button class="product-ask" type="button" data-product="light">咨询这款产品 <span>↗</span></button></article>
+          <article class="product-card"><div class="product-card-image"><img src="/assets/demo-tumbler.png" alt="演示款随行杯" /><span class="product-tag muted-tag">日常好物</span></div><div class="product-card-info"><div><h3>演示款随行杯</h3><p>保温 · 便携 · 450ml</p></div><strong>¥129 起</strong></div><button class="product-ask" type="button" data-product="tumbler">咨询这款产品 <span>↗</span></button></article>
+        </div>
+      </section>
+
+      <section class="service-section" id="service"><div class="service-intro"><p class="eyebrow">SERVICE</p><h2>像逛店一样，<br /><em>随时有人回答。</em></h2></div><div class="service-list"><div><span class="service-index">01</span><div><h3>24 小时先响应</h3><p>夜间也能获取产品资料、价格和常见问题答案。</p></div></div><div><span class="service-index">02</span><div><h3>营业时间人工跟进</h3><p>周一至周五 09:00–18:00，周六 10:00–17:00。</p></div></div><div><span class="service-index">03</span><div><h3>不确定就转人工</h3><p>需要定制建议或复杂问题，客服会直接邀请人工接管。</p></div></div></div></section>
+    </main>
+
+    <aside class="chat-panel is-visible" id="chat" aria-label="在线客服" aria-hidden="false">
+      <div class="chat-topbar"><div class="agent-identity"><span class="agent-avatar">示</span><div><strong>示例商店客服</strong><span><i class="status-dot"></i> 通常立即回复</span></div></div><div class="chat-top-actions"><button class="icon-button" id="chat-minimize" type="button" aria-label="收起客服窗口">−</button><button class="icon-button" id="chat-close" type="button" aria-label="关闭客服窗口">×</button></div></div>
+      <div class="chat-context"><span class="context-icon">✦</span><span>在线产品顾问已为你准备好菜单</span><button class="context-close" type="button" aria-label="关闭提示">×</button></div>
+      <div class="chat-body" id="chat-body"><div class="chat-day">今天</div><div class="chat-messages" id="chat-messages" aria-live="polite"><div class="message-row agent-row"><span class="mini-avatar">示</span><div class="message-bubble agent-bubble"><p>你好，我是示例商店的在线顾问 👋</p><p>可以帮你了解产品、价格和适合的使用场景。你想先看哪一项？</p><span class="message-time">刚刚</span></div></div></div></div>
+      <div class="quick-menu" id="quick-menu"><button type="button" data-action="products">了解产品</button><button type="button" data-action="prices">查看价格</button><button type="button" data-action="hours">营业时间</button><button type="button" data-action="human">联系人工</button></div>
+      <form class="chat-composer" id="chat-form"><button class="composer-icon" type="button" aria-label="添加附件">＋</button><input id="chat-input" autocomplete="off" placeholder="输入你想了解的内容…" aria-label="输入消息" /><button class="send-button" type="submit" aria-label="发送消息">↑</button></form>
+      <div class="chat-footer"><span>由 AI 顾问提供支持</span><span>隐私安全</span></div>
+    </aside>
+    <button class="chat-launcher" id="chat-launcher" type="button" aria-label="打开在线客服"><span class="launcher-icon">✦</span><span>咨询</span></button>
+  </body>
+</html>
