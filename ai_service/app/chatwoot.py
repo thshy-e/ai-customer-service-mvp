@@ -27,6 +27,7 @@ class ChatwootClient:
 
     @property
     def headers(self) -> dict[str, str]:
+        # Chatwoot API 需要用 api_access_token 放在请求头中鉴权。
         return {"api_access_token": self.api_token, "Content-Type": "application/json"}
 
     def _conversation_url(self, conversation_id: int, suffix: str = "") -> str:
@@ -59,6 +60,7 @@ class ChatwootClient:
         return response.json()
 
     async def send_main_menu(self, conversation_id: int) -> None:
+        # 新会话先给固定菜单，让访客不用输入复杂描述也能开始咨询。
         items = [
             {"title": "了解产品", "value": "了解产品"},
             {"title": "查看价格", "value": "查看价格"},
@@ -82,6 +84,7 @@ class ChatwootClient:
         )
 
     async def send_product_cards(self, conversation_id: int, products: Iterable[Product]) -> None:
+        # Chatwoot 的 cards 组件负责展示图片、价格和产品操作按钮。
         cards = []
         for product in products:
             prices = "；".join(f"{row.label} {row.price}" for row in product.price_rows)
@@ -114,6 +117,7 @@ class ChatwootClient:
         )
 
     async def handoff(self, conversation_id: int, message: str) -> None:
+        # 先告知访客，再把会话切到 open，让人工客服可以接管。
         await self.send_message(conversation_id, message)
         response = await self.http.post(
             self._conversation_url(conversation_id, "toggle_status"),
@@ -124,6 +128,7 @@ class ChatwootClient:
             raise ChatwootError(f"Chatwoot handoff failed: {response.status_code} {response.text[:300]}")
 
     async def recent_messages(self, conversation_id: int, limit: int = 12) -> list[dict[str, str]]:
+        # 只保留最近几条纯文本消息，控制模型上下文长度。
         response = await self.http.get(self._conversation_url(conversation_id), headers=self.headers)
         if response.is_error:
             return []
@@ -138,4 +143,3 @@ class ChatwootClient:
             role = "user" if message_type in (0, "0", "incoming") else "assistant"
             history.append({"role": role, "content": content})
         return history
-

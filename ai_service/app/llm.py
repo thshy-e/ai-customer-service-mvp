@@ -16,6 +16,7 @@ class ModelReply(BaseModel):
 
 
 class ModelGateway(Protocol):
+    # 业务层只依赖这个小接口，因此可以替换真实模型或测试替身。
     async def run(self, messages: list[dict[str, Any]], tools: list[dict[str, Any]]) -> ModelReply: ...
 
 
@@ -25,6 +26,7 @@ class OpenAICompatibleGateway:
         self.model = model
 
     async def run(self, messages: list[dict[str, Any]], tools: list[dict[str, Any]]) -> ModelReply:
+        # 百炼等兼容 OpenAI 协议的服务都可以通过同一套调用方式接入。
         response = await self.client.chat.completions.create(
             model=self.model,
             messages=messages,
@@ -45,6 +47,7 @@ class OpenAICompatibleGateway:
         return ModelReply(text=message.content or "", tool_calls=calls)
 
 
+# 工具是模型能做什么的声明，真正执行逻辑在 bot.py 中。
 TOOLS: list[dict[str, Any]] = [
     {
         "type": "function",
@@ -94,4 +97,3 @@ TOOLS: list[dict[str, Any]] = [
         },
     },
 ]
-

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AI 外贸销售助手内部工作台" />
+    <title>Sales Desk · AI 外贸销售助手</title>
+    <link rel="stylesheet" href="/sales.css" />
+    <script src="/sales.js" defer></script>
+  </head>
+  <body>
+    <div class="sales-shell">
+      <aside class="sales-sidebar">
+        <a class="sales-brand" href="/sales.html"><span class="sales-brand-mark">S</span><span>Sales Desk</span></a>
+        <div class="sidebar-caption">INTERNAL WORKSPACE</div>
+        <nav class="sales-nav" aria-label="销售助手导航">
+          <button class="nav-item is-active" type="button" data-view-target="overview"><span class="nav-icon">⌂</span>工作概览</button>
+          <button class="nav-item" type="button" data-view-target="knowledge"><span class="nav-icon">▤</span>企业资料</button>
+          <button class="nav-item" type="button" data-view-target="inquiry"><span class="nav-icon">↗</span>询盘解析</button>
+          <button class="nav-item" type="button" data-view-target="drafts"><span class="nav-icon">▧</span>销售草稿</button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="privacy-note"><span>◎</span><div><strong>人工确认后发送</strong><small>AI 不会自动联系客户</small></div></div>
+          <button class="logout-button" id="logout-button" type="button">退出当前账号</button>
+        </div>
+      </aside>
+
+      <main class="sales-main">
+        <header class="sales-topbar">
+          <div><span class="topbar-kicker">AI 外贸销售助手</span><h1 id="page-title">工作概览</h1></div>
+          <div class="topbar-user"><span class="online-mark"></span><span id="user-email">未登录</span><span class="role-badge" id="user-role">—</span></div>
+        </header>
+
+        <div class="sales-content">
+          <section class="sales-view is-active" data-view="overview">
+            <div class="welcome-row"><div><p class="view-kicker">TODAY, SALES TEAM</p><h2>把询盘变成下一步。</h2><p class="view-intro">先让 AI 读懂企业和客户，再由业务员确认每一个商业承诺。</p></div><button class="button button-dark" type="button" data-view-target="inquiry">解析一张询盘 <span>↗</span></button></div>
+            <div class="overview-grid">
+              <article class="metric-panel"><span class="metric-label">资料源</span><strong id="metric-sources">0</strong><small>等待上传企业资料</small></article>
+              <article class="metric-panel metric-accent"><span class="metric-label">产品系列</span><strong>6</strong><small>来自 Kook 图册目录</small></article>
+              <article class="metric-panel"><span class="metric-label">发送策略</span><strong>人工</strong><small>草稿生成后复制发送</small></article>
+            </div>
+            <div class="overview-lower">
+              <section class="open-panel action-panel"><div class="panel-heading"><div><span class="panel-kicker">START HERE</span><h3>完成一次销售闭环</h3></div><span class="panel-index">01 — 03</span></div><div class="action-list"><button type="button" data-view-target="knowledge"><span class="action-number">01</span><span><strong>上传企业资料</strong><small>图册、公司介绍、规格表和政策</small></span><span class="action-arrow">↗</span></button><button type="button" data-view-target="knowledge" data-start-interview="true"><span class="action-number">02</span><span><strong>完成企业十问</strong><small>让回复有真实的业务背景</small></span><span class="action-arrow">↗</span></button><button type="button" data-view-target="inquiry"><span class="action-number">03</span><span><strong>解析客户询盘</strong><small>截图、邮件或聊天记录都可以</small></span><span class="action-arrow">↗</span></button></div></section>
+              <section class="open-panel source-panel"><div class="panel-heading"><div><span class="panel-kicker">PRODUCT CATALOG</span><h3>Kook 图册状态</h3></div><span class="status-label"><i></i>待确认</span></div><div class="catalog-preview"><div class="catalog-pages"><strong>26</strong><span>页图片型 PDF</span></div><div class="catalog-series"><span>Moving Head Light</span><span>Par Light</span><span>Laser Light</span><span>Retro Light</span><span>Console</span><span>Special Effects</span></div></div><button class="line-button" type="button" data-view-target="knowledge">查看资料处理 <span>→</span></button></section>
+            </div>
+          </section>
+
+          <section class="sales-view" data-view="knowledge">
+            <div class="section-title-row"><div><p class="view-kicker">KNOWLEDGE BASE</p><h2>企业资料</h2><p class="view-intro">原始文件会被保留，解析结果按页记录来源；价格、MOQ、库存和交期不会从图册猜测。</p></div><button class="button button-dark" id="start-interview" type="button">开始企业十问 <span>↗</span></button></div>
+            <div class="knowledge-layout"><section class="open-panel upload-panel"><div class="upload-symbol">↑</div><h3>上传企业资料</h3><p>支持 PDF、DOCX、PNG、JPG，单文件不超过 100MB。图片型图册会标记为 OCR 待处理。</p><label class="file-drop" for="knowledge-file"><span>选择文件</span><small id="knowledge-file-name">或拖拽到这里</small></label><input id="knowledge-file" type="file" accept=".pdf,.docx,.png,.jpg,.jpeg,.webp" /><button class="button button-green" id="knowledge-upload" type="button">开始解析</button><div class="job-status" id="knowledge-job" hidden></div></section><section class="open-panel sources-panel"><div class="panel-heading"><div><span class="panel-kicker">SOURCE REGISTER</span><h3>资料处理原则</h3></div></div><ul class="principle-list"><li><span>01</span><div><strong>先保留原件</strong><small>原始文件存储地址不会进入普通日志。</small></div></li><li><span>02</span><div><strong>再逐页解析</strong><small>每页都有 source_document_id 和页码。</small></div></li><li><span>03</span><div><strong>最后人工确认</strong><small>草稿只能使用已确认或明确标注待确认的事实。</small></div></li></ul><div class="source-footnote">当前存储：本地文件卷<br />生产环境可切换 OSS / MinIO</div></section></div>
+            <section class="open-panel interview-panel" id="interview-panel" hidden><div class="panel-heading"><div><span class="panel-kicker">COMPANY INTERVIEW</span><h3>企业十问</h3></div><span id="interview-progress">0 / 10</span></div><p id="interview-question"></p><textarea id="interview-answer" rows="4" placeholder="输入真实业务答案，避免使用占位话术"></textarea><div class="interview-actions"><span id="interview-status">草稿状态</span><button class="button button-green" id="interview-submit" type="button">保存并继续</button></div></section>
+          </section>
+
+          <section class="sales-view" data-view="inquiry">
+            <div class="section-title-row"><div><p class="view-kicker">INQUIRY ANALYSIS</p><h2>询盘解析</h2><p class="view-intro">上传 WhatsApp、Email 或社交媒体截图，AI 会标出已知信息、缺口和需要人工确认的地方。</p></div><span class="human-only-note">草稿 · 人工审核</span></div>
+            <div class="inquiry-layout"><section class="open-panel inquiry-input-panel"><div class="panel-heading"><div><span class="panel-kicker">INCOMING MESSAGE</span><h3>客户原始询盘</h3></div></div><label class="file-drop file-drop-large" for="inquiry-file"><span id="inquiry-file-label">上传询盘截图</span><small>PNG / JPG / WEBP</small></label><input id="inquiry-file" type="file" accept="image/png,image/jpeg,image/webp" /><label class="field-label" for="inquiry-context">补充上下文 <span>可选</span></label><textarea id="inquiry-context" rows="6" placeholder="例如：客户来自迪拜，询问 20 台舞台灯，计划 9 月活动使用……"></textarea><button class="button button-green button-wide" id="analyze-inquiry" type="button">生成分析和英文回复 <span>↗</span></button><div class="analysis-loading" id="analysis-loading" hidden>正在读取图片并整理客户需求…</div></section><section class="analysis-result" id="analysis-result"><div class="empty-result"><span class="empty-mark">✦</span><h3>等待一张询盘</h3><p>分析结果会显示在这里，包括客户国家、数量、应用、缺失信息和引用来源。</p></div></section></div>
+          </section>
+
+          <section class="sales-view" data-view="drafts">
+            <div class="section-title-row"><div><p class="view-kicker">SALES DRAFTS</p><h2>销售草稿</h2><p class="view-intro">当前会话的草稿会在询盘解析后显示。发送前请由业务员编辑、确认并复制。</p></div></div>
+            <section class="open-panel draft-empty-panel"><span class="empty-mark">▧</span><h3>还没有草稿</h3><p>从“询盘解析”开始，生成第一封有来源的英文回复。</p><button class="button button-dark" type="button" data-view-target="inquiry">去解析询盘 <span>↗</span></button></section>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <dialog class="login-dialog" id="login-dialog"><form method="dialog" id="login-form"><div class="login-mark">S</div><p class="view-kicker">PRIVATE SALES DESK</p><h2>登录销售助手</h2><p>这是内部工作台，业务员和管理员共用一个企业资料源。</p><label for="login-email">邮箱</label><input id="login-email" type="email" value="admin@example.com" required /><label for="login-password">密码</label><input id="login-password" type="password" value="change-me" required /><button class="button button-green button-wide" type="submit">进入工作台 <span>↗</span></button><div class="login-error" id="login-error" role="alert"></div></form></dialog>
+  </body>
+</html>

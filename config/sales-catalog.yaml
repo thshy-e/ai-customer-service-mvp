@@ -1,0 +1,35 @@
+# 内部销售助手的 Kook 图册分类索引。
+# 这里仅记录图册能证明的系列，不包含价格、MOQ、库存、交期或付款条件。
+source_document: "Kook Stage Light Catalog"
+source_pages: "26"
+series:
+  - id: moving-head-light
+    name: Moving Head Light
+    aliases: [moving head, moving-head, 摇头灯, 摇头光束灯]
+    catalog_range: "01-16"
+    summary: Moving-head stage lighting series from the Kook catalog. Confirm model and technical specification before quoting.
+  - id: par-light
+    name: Par Light
+    aliases: [par, par can, par light, 帕灯]
+    catalog_range: "17-28"
+    summary: Par light series from the Kook catalog. Confirm model, power and beam angle before quoting.
+  - id: laser-light
+    name: Laser Light
+    aliases: [laser, laser light, 激光灯]
+    catalog_range: "29-31"
+    summary: Laser light series from the Kook catalog. Confirm model, output and certification before quoting.
+  - id: retro-light
+    name: Retro Light
+    aliases: [retro, retro light, 复古灯]
+    catalog_range: "32-39"
+    summary: Retro light series from the Kook catalog. Confirm model and available finish before quoting.
+  - id: console
+    name: Console
+    aliases: [lighting console, console, 控台, 灯光控台]
+    catalog_range: "40-43"
+    summary: Lighting console series from the Kook catalog. Confirm model, software and control protocol before quoting.
+  - id: special-effects
+    name: Special Effects
+    aliases: [special effects, effect machine, 特效, 舞台特效]
+    catalog_range: "44-48"
+    summary: Special effects series from the Kook catalog. Confirm machine type, power and venue requirements before quoting.

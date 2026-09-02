@@ -4,4 +4,6 @@ __pycache__/
 .pytest_cache/
 *.pyc
 .DS_Store
-
+data/
+node_modules/
+tmp/

@@ -18,6 +18,7 @@ class Catalog:
 
     @classmethod
     def from_directory(cls, config_dir: Path) -> "Catalog":
+        # 商品、FAQ 分开维护，便于非开发人员只修改配置文件。
         with (config_dir / "products.yaml").open(encoding="utf-8") as file:
             product_data = yaml.safe_load(file) or {}
         with (config_dir / "faq.yaml").open(encoding="utf-8") as file:
@@ -31,6 +32,7 @@ class Catalog:
         return self._by_id.get(product_id)
 
     def find(self, query: str, limit: int = 3) -> list[Product]:
+        # 先按名称和别名做轻量匹配，MVP 不引入向量库也能覆盖常见问法。
         needle = normalize(query)
         if not needle:
             return []
@@ -55,6 +57,7 @@ class Catalog:
         return [product for _, product in scored[:limit]]
 
     def answer_faq(self, query: str) -> FAQ | None:
+        # FAQ 采用关键词命中；没有明确命中时交给模型或人工处理。
         needle = normalize(query)
         matches = [
             faq
@@ -68,4 +71,3 @@ class Catalog:
             f"- {product.id}: {product.name}; aliases={','.join(product.aliases)}; {product.summary}"
             for product in self.products
         )
-

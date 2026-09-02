@@ -5,4 +5,11 @@ openai>=1.68,<3
 pydantic-settings>=2.8,<3
 PyYAML>=6,<7
 redis>=5,<8
-
+SQLAlchemy>=2.0,<3
+greenlet>=3.0,<4
+aiosqlite>=0.20,<1
+asyncpg>=0.29,<1
+python-multipart>=0.0.9,<1
+pypdf>=5,<7
+python-docx>=1.1,<2
+PyMuPDF>=1.24,<2
