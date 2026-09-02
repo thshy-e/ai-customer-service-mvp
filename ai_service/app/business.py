@@ -41,10 +41,12 @@ class BusinessHours:
 
     @classmethod
     def from_file(cls, path: Path) -> "BusinessHours":
+        # 营业时间来自版本化 YAML，修改配置即可调整时区和工作日。
         with path.open(encoding="utf-8") as file:
             return cls(BusinessConfig.model_validate(yaml.safe_load(file)))
 
     def status(self, at: datetime | None = None) -> BusinessStatus:
+        # 所有时间计算统一使用配置时区，避免服务器时区不同导致误判。
         current = at.astimezone(self.timezone) if at else datetime.now(self.timezone)
         intervals = self._intervals_for(current.date())
 
@@ -86,4 +88,3 @@ class BusinessHours:
                 if start_at > current:
                     return start_at
         return None
-

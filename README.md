@@ -1,6 +1,6 @@
 # 24 小时 AI 客服 MVP
 
-这是一个可自托管的最小客服系统：Chatwoot 负责网站聊天窗口、会话工作台、营业时间、通知和人工接管；FastAPI AgentBot 负责大模型对话、商品查询、价格卡片和销售话术。
+这是一个可自托管的最小客服系统，并新增了内部 AI 外贸销售助手：Chatwoot 负责网站聊天窗口、会话工作台、营业时间、通知和人工接管；FastAPI 负责网站 AgentBot、企业资料任务、询盘截图解析和带来源的英文销售草稿。
 
 ## 已实现
 
@@ -12,13 +12,15 @@
 - Chatwoot `pending -> open` 人工接管
 - Webhook HMAC 校验、消息去重、模型异常兜底
 - 无 Chatwoot token 时的本地界面预览
+- 内部销售工作台：企业资料上传、企业十问、询盘截图解析、英文草稿和来源展示
+- 本地 SQLite 销售数据层，可通过 `SALES_DATABASE_URL` 切换 PostgreSQL
 
 ## 项目结构
 
 ```text
 ai_service/                 FastAPI AgentBot 和测试
 config/                     商品、FAQ、营业时间、销售规范
-web/                        H5 入口和演示商品素材
+web/                        H5 客服入口、内部销售工作台和演示商品素材
 docker-compose.yml          Chatwoot、AI、PostgreSQL、Redis、Web
 .env.example                环境变量模板
 ```
@@ -47,8 +49,11 @@ docker compose up -d
 启动后：
 
 - H5 页面：<http://localhost:8080>
+- 内部销售工作台：<http://localhost:8080/sales.html>
 - Chatwoot：<http://localhost:3000>
-- AI 健康检查：<http://localhost:8000/health>
+- AI 健康检查：<http://localhost:8010/health>
+
+销售工作台默认登录账号来自 `.env`：`admin@example.com / change-me`（上线前必须替换）。管理员可以上传企业资料并完成十问，业务员可以分析询盘并生成草稿。第一版没有自动发送客户消息的接口。
 
 ## 2. 配置 Chatwoot
 
@@ -83,11 +88,13 @@ LLM_MODEL=qwen-plus
 
 服务通过 OpenAI 兼容协议调用模型。切换 DeepSeek 或其他兼容模型时，只需要修改以上三个变量。
 
+销售助手的视觉和 OCR 请求使用 `SALES_VISION_MODEL`、`SALES_OCR_MODEL`，默认是已验证可识别图像的 `qwen3-vl-plus`；英文草稿继续使用 `SALES_TEXT_MODEL`，默认是 `qwen-plus`。图册分页结果可通过登录后的 `GET /knowledge/sources/{source_id}/pages` 查看，型号候选必须人工确认后才能进入正式产品库。
+
 重启 AI 服务：
 
 ```bash
 docker compose up -d --force-recreate ai-service
-curl http://localhost:8000/health
+curl http://localhost:8010/health
 ```
 
 `llm_configured` 为 `true` 表示模型已配置。健康检查不会消耗模型额度。
@@ -104,6 +111,8 @@ curl http://localhost:8000/health
 - `web/index.html.template`：品牌名和首页文案
 
 本地图片放在 `web/assets/`，YAML 中使用 `/assets/文件名`。部署到公网后，将 `PUBLIC_ASSET_BASE_URL` 改为 H5 的公网 HTTPS 地址，否则 Chatwoot 商品卡片无法加载图片。
+
+销售助手上传的 PDF、DOCX 和截图默认保存在 `sales_data` 卷的 `/app/data`。生产部署建议设置 `SALES_DATABASE_URL=postgresql+asyncpg://...` 并把文件存储替换为 OSS/MinIO；当前 MVP 已记录来源 ID 和页码，但尚未提供资料管理后台。
 
 ## 5. 验收路径
 
@@ -132,6 +141,5 @@ python3 -m venv .venv
 
 - 只有一个网站入口、一个商品配置源和一个模型实例。
 - 商品与营业资料变更后需要重启 `ai-service`。
-- 未实现订单、支付、会员、管理后台、向量检索和多渠道接入。
+- 未实现订单、支付、会员、向量检索、LangGraph 持久化工作流、自动外部发送和多渠道接入。
 - Chatwoot Community Edition 本身不收 SaaS 订阅费，但服务器、域名和模型 API 仍有成本。
-

@@ -12,6 +12,7 @@ from .llm import ModelGateway, TOOLS
 from .models import DirectChatResponse, Product, ProductPreview, WebhookEvent
 
 
+# 价格只能来自商品工具；这个正则用于拦截模型自行编造报价。
 PRICE_PATTERN = re.compile(r"(?:[¥￥]\s*\d|\d+(?:\.\d+)?\s*元|RMB\s*\d)", re.IGNORECASE)
 HUMAN_TERMS = ("人工", "真人", "转客服", "客服人员", "投诉")
 BUSINESS_TERMS = ("营业时间", "几点上班", "几点下班", "什么时候有人", "工作时间")
@@ -35,6 +36,7 @@ class CustomerServiceBot:
             self.sales_policy = yaml.safe_load(file) or {}
 
     async def handle(self, event: WebhookEvent) -> None:
+        # 先处理确定性规则，再交给模型，保证菜单、价格和转人工行为稳定。
         conversation_id = event.conversation_id
         if not conversation_id:
             return
@@ -93,6 +95,7 @@ class CustomerServiceBot:
     async def direct_reply(
         self, content: str, history: list[dict[str, str]] | None = None
     ) -> DirectChatResponse:
+        # H5 对话和 Chatwoot 共用同一套路由，但返回 JSON 而不是发送消息。
         content = content.strip()
         if any(term in content for term in HUMAN_TERMS):
             status = self.business_hours.status()
@@ -140,6 +143,7 @@ class CustomerServiceBot:
         product_data_retrieved = False
         shown_products: list[Product] = []
 
+        # 每轮最多允许模型调用 4 次工具，防止异常响应造成无限循环。
         for _ in range(4):
             reply = await self.model.run(messages, TOOLS)
             assistant_message: dict[str, Any] = {"role": "assistant", "content": reply.text or None}
@@ -151,6 +155,7 @@ class CustomerServiceBot:
             messages.append(assistant_message)
 
             if not reply.tool_calls:
+                # 没有工具调用表示模型已经组织好最终答复。
                 text = reply.text.strip() or "你可以再补充一下使用场景和预算。"
                 if PRICE_PATTERN.search(text) and not product_data_retrieved:
                     text = "为了避免报错价格，请先告诉我具体想了解哪一款产品。"
@@ -161,6 +166,7 @@ class CustomerServiceBot:
                 )
 
             for call in reply.tool_calls:
+                # 工具参数来自模型，解析失败时使用空对象，让流程安全结束。
                 try:
                     arguments = json.loads(call.arguments or "{}")
                 except json.JSONDecodeError:
@@ -201,6 +207,7 @@ class CustomerServiceBot:
         )
 
     async def _run_model(self, conversation_id: int, content: str) -> None:
+        # Chatwoot 模式需要先读历史消息，模型才能理解连续追问。
         history = await self.chatwoot.recent_messages(conversation_id)
         if not history or history[-1].get("content") != content:
             history.append({"role": "user", "content": content})
@@ -211,6 +218,7 @@ class CustomerServiceBot:
         ]
         product_data_retrieved = False
 
+        # 工具调用和最终回复交替进行，达到上限仍未完成就转人工。
         for _ in range(4):
             reply = await self.model.run(messages, TOOLS)
             assistant_message: dict[str, Any] = {"role": "assistant", "content": reply.text or None}
@@ -258,6 +266,7 @@ class CustomerServiceBot:
     async def _execute_tool(
         self, conversation_id: int, name: str, arguments: dict[str, Any]
     ) -> tuple[dict[str, Any], bool, bool]:
+        # 所有会改变会话状态的动作都集中在这里，便于审计和测试。
         if name == "get_business_status":
             return self.business_hours.status().model_dump(mode="json"), False, False
 
@@ -291,6 +300,7 @@ class CustomerServiceBot:
         return content.removeprefix("product:") if content.startswith("product:") else None
 
     def _system_prompt(self) -> str:
+        # Prompt 只描述规则和可识别目录；真实价格由工具返回，避免事实漂移。
         policy = yaml.safe_dump(self.sales_policy, allow_unicode=True, sort_keys=False)
         return f"""你是网站在线产品顾问。用自然、专业、简洁的中文沟通。
 

@@ -19,6 +19,7 @@ class Product(BaseModel):
     cta_label: str = "咨询这款"
 
     def tool_payload(self) -> dict[str, Any]:
+        # 发给模型的商品数据不包含图片路径等无关字段，只保留可核实事实。
         return {
             "id": self.id,
             "name": self.name,
@@ -72,6 +73,7 @@ class WebhookEvent(BaseModel):
 
     @property
     def conversation_id(self) -> int | None:
+        # 不同 Chatwoot 事件可能提供 id 或 display_id，这里统一成整数。
         source = self.conversation or {}
         value = source.get("id") or source.get("display_id")
         try:
@@ -81,6 +83,7 @@ class WebhookEvent(BaseModel):
 
     @property
     def is_incoming_contact_message(self) -> bool:
+        # 过滤机器人、坐席和私密消息，避免客服回复再次触发机器人。
         incoming = self.message_type in ("incoming", 0, "0")
         sender_type = str((self.sender or {}).get("type", "")).lower()
         return (

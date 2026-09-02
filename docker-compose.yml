@@ -19,6 +19,7 @@ services:
     environment:
       NODE_ENV: production
       RAILS_ENV: production
+      APP_ENV: production
       INSTALLATION_ENV: docker
       FRONTEND_URL: ${CHATWOOT_PUBLIC_URL:-http://localhost:3000}
       FORCE_SSL: "false"
@@ -44,6 +45,7 @@ services:
     environment:
       NODE_ENV: production
       RAILS_ENV: production
+      APP_ENV: production
       INSTALLATION_ENV: docker
       FRONTEND_URL: ${CHATWOOT_PUBLIC_URL:-http://localhost:3000}
       POSTGRES_HOST: postgres
@@ -61,6 +63,17 @@ services:
     env_file: .env
     environment:
       REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      SALES_DATABASE_URL: ${SALES_DATABASE_URL:-sqlite+aiosqlite:///./data/sales.db}
+      SALES_UPLOAD_DIR: /app/data/uploads
+      SALES_VISION_ENABLED: ${SALES_VISION_ENABLED:-true}
+      SALES_OCR_ENABLED: ${SALES_OCR_ENABLED:-true}
+      SALES_OCR_CONCURRENCY: ${SALES_OCR_CONCURRENCY:-3}
+      SALES_OCR_PAGE_TIMEOUT_SECONDS: ${SALES_OCR_PAGE_TIMEOUT_SECONDS:-35}
+      SALES_VISION_MODEL: ${SALES_VISION_MODEL:-qwen3-vl-plus}
+      SALES_OCR_MODEL: ${SALES_OCR_MODEL:-qwen3-vl-plus}
+      SALES_TEXT_MODEL: ${SALES_TEXT_MODEL:-qwen-plus}
+      SALES_FAST_MODEL: ${SALES_FAST_MODEL:-qwen3.7-flash}
+      SALES_EMBEDDING_MODEL: ${SALES_EMBEDDING_MODEL:-qwen3.7-text-embedding}
     depends_on:
       redis:
         condition: service_healthy
@@ -68,8 +81,9 @@ services:
         condition: service_started
     volumes:
       - ./config:/app/config:ro
+      - sales_data:/app/data
     ports:
-      - "8000:8000"
+      - "8010:8000"
     restart: unless-stopped
 
   web:
@@ -83,6 +97,9 @@ services:
       - ./web/index.html.template:/etc/nginx/templates/index.html.template:ro
       - ./web/styles.css:/usr/share/nginx/html/styles.css:ro
       - ./web/app.js:/usr/share/nginx/html/app.js:ro
+      - ./web/sales.html:/usr/share/nginx/html/sales.html:ro
+      - ./web/sales.css:/usr/share/nginx/html/sales.css:ro
+      - ./web/sales.js:/usr/share/nginx/html/sales.js:ro
       - ./web/assets:/usr/share/nginx/html/assets:ro
     ports:
       - "8080:80"
@@ -121,3 +138,4 @@ volumes:
   storage_data:
   postgres_data:
   redis_data:
+  sales_data:
